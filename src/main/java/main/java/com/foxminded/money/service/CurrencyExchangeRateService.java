@@ -24,7 +24,7 @@ public class CurrencyExchangeRateService {
     Logger LOGGER = LoggerFactory.getLogger(CurrencyExchangeRateService.class);
 
     @Autowired
-    private DateService dateBean;
+    private DateService dateService;
 
     private RestTemplate restTemplate = new RestTemplate();
     private String url = "https://api.privatbank.ua/p24api/exchange_rates";
@@ -45,7 +45,7 @@ public class CurrencyExchangeRateService {
 
         if (!sellRates.containsKey(currency)) {
             throw new IllegalStateException("There is no exchange rate for currency "
-                    + currency + " from service " + url + urlJsonParam + urlDateParam + rateDate);
+                    + currency + " from service " + url);
         }
 
         return sellRates.get(currency);
@@ -60,7 +60,7 @@ public class CurrencyExchangeRateService {
 
         if (!sellRates.containsKey(currency)) {
             throw new IllegalStateException("There is no exchange rate for currency "
-                    + currency + " from service " + url + urlJsonParam + urlDateParam + rateDate);
+                    + currency + " from service " + url);
         }
 
         return purchaseRates.get(currency);
@@ -73,15 +73,16 @@ public class CurrencyExchangeRateService {
     }
 
     private PrivatBankExchangeRatesDto getDtoFromUrl() {
+        String urlWithParams = url + urlJsonParam + urlDateParam + rateDate;
 
-        LOGGER.info("Send GET request to " + url + urlJsonParam + urlDateParam + rateDate);
-        ResponseEntity<PrivatBankExchangeRatesDto> response = restTemplate.getForEntity(url + urlJsonParam
-                + urlDateParam + rateDate, PrivatBankExchangeRatesDto.class);
+        LOGGER.info("Send GET request to " + urlWithParams);
+        ResponseEntity<PrivatBankExchangeRatesDto> response = restTemplate.getForEntity(urlWithParams,
+                PrivatBankExchangeRatesDto.class);
 
 
         if (!response.getStatusCode().equals(HttpStatus.OK)) {
             rateDate = "";
-            LOGGER.error("Service unavailable " + url + urlJsonParam + urlDateParam + rateDate);
+            LOGGER.error("Service unavailable " + urlWithParams);
             throw new ServiceUnavailableException(response.getStatusCode().toString() +
                     url + urlJsonParam + urlDateParam + rateDate + System.lineSeparator()
                     + response.getHeaders().toString());
@@ -107,7 +108,7 @@ public class CurrencyExchangeRateService {
     }
 
     private void getExchangeRates() {
-        String currentDate = dateTimeFormatter.format(dateBean.getDate());
+        String currentDate = dateTimeFormatter.format(dateService.getDate());
         if (!currentDate.equals(rateDate)) {
             rateDate = currentDate;
             parseDto(getDtoFromUrl());
