@@ -1,7 +1,6 @@
 package main.java.com.foxminded.money.logging;
 
 import main.java.com.foxminded.money.exeptions.ErrorResponce;
-import main.java.com.foxminded.money.exeptions.ServerErrorException;
 import main.java.com.foxminded.money.exeptions.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

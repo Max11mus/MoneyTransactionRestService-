@@ -1,6 +1,5 @@
 package main.java.com.foxminded.money.logging;
 
-import main.java.com.foxminded.money.exeptions.ServerErrorException;
 import main.java.com.foxminded.money.exeptions.ServiceUnavailableException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
