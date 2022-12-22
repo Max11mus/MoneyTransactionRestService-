@@ -1,6 +1,7 @@
 package main.java.com.foxminded.money.logging;
 
 import main.java.com.foxminded.money.exeptions.ServerErrorException;
+import main.java.com.foxminded.money.exeptions.ServiceUnavailableException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -48,7 +49,7 @@ public class TransactionsAspectLogger {
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             LOGGER.error("Unroll Transaction");
-            throw new ServerErrorException(e.getMessage(), e);
+            throw new ServiceUnavailableException(e.getMessage(), e);
         }
         return result;
     }
