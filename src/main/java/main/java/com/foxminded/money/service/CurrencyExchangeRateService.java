@@ -7,11 +7,14 @@ import main.java.com.foxminded.money.validation.ValidCurrencyCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -27,9 +30,13 @@ public class CurrencyExchangeRateService {
     private DateService dateService;
 
     private RestTemplate restTemplate = new RestTemplate();
-    private String url = "https://api.privatbank.ua/p24api/exchange_rates";
-    private String urlJsonParam = "?json";
-    private String urlDateParam = "&date=";
+
+    @Value( "${privat.bank.exchange.rate.service.url}" )
+    private String url;
+    private String path = "/p24api/exchange_rates";
+    private String jsonParamName = "json";
+    private String dateParamName = "date";
+
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private String baseCurrency;
     private String rateDate;
@@ -51,7 +58,7 @@ public class CurrencyExchangeRateService {
         return sellRates.get(currency);
     }
 
-    public Double getPurschaseExchangeRate(@ValidCurrencyCode String currency) {
+    public Double getPurchaseExchangeRate(@ValidCurrencyCode String currency) {
         getExchangeRates();
 
         if (currency.equals(baseCurrency)) {
@@ -73,18 +80,26 @@ public class CurrencyExchangeRateService {
     }
 
     private PrivatBankExchangeRatesDto getDtoFromUrl() {
-        String urlWithParams = url + urlJsonParam + urlDateParam + rateDate;
 
-        LOGGER.info("Send GET request to " + urlWithParams);
-        ResponseEntity<PrivatBankExchangeRatesDto> response = restTemplate.getForEntity(urlWithParams,
+        UriComponents uriComponents = UriComponentsBuilder
+                .fromHttpUrl(url)
+                .path(path)
+                .queryParam(jsonParamName)
+                .queryParam(dateParamName, rateDate)
+                .build()
+                .encode();
+
+
+        LOGGER.info("Send GET request to " + uriComponents.toUriString());
+        ResponseEntity<PrivatBankExchangeRatesDto> response = restTemplate.getForEntity(uriComponents.toUriString(),
                 PrivatBankExchangeRatesDto.class);
 
 
         if (!response.getStatusCode().equals(HttpStatus.OK)) {
             rateDate = "";
-            LOGGER.error("Service unavailable " + urlWithParams);
-            throw new ServiceUnavailableException(response.getStatusCode().toString() +
-                    url + urlJsonParam + urlDateParam + rateDate + System.lineSeparator()
+            LOGGER.error("Service unavailable " + uriComponents.toUriString());
+            throw new ServiceUnavailableException(response.getStatusCode().toString()
+                    + uriComponents.toUriString() + System.lineSeparator()
                     + response.getHeaders().toString());
         }
 

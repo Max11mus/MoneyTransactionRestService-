@@ -67,7 +67,7 @@ public abstract class MoneyTransactionMapper {
         if (baseCurrencyCode.equals(currencyCode)) {
             result.setAmount(entity.getMonetaryAmount().getNumber().numberValueExact(BigDecimal.class)
                     .multiply(BigDecimal.valueOf(
-                            currencyExchangeRateService.getPurschaseExchangeRate(
+                            currencyExchangeRateService.getPurchaseExchangeRate(
                                     entity.getMonetaryAmount().getCurrency().toString()))));
         }
         else {
