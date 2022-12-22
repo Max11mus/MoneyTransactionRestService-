@@ -2,6 +2,7 @@ package main.java.com.foxminded.money.logging;
 
 import main.java.com.foxminded.money.exeptions.ErrorResponce;
 import main.java.com.foxminded.money.exeptions.ServerErrorException;
+import main.java.com.foxminded.money.exeptions.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,15 +46,15 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponce, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {ServerErrorException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = {ServiceUnavailableException.class})
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public ResponseEntity<ErrorResponce> handleServerError(RuntimeException e) {
         ErrorResponce errorResponce = new ErrorResponce(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(),
-                "The server has encountered a situation it does not know how to handle.");
+                "Server error response code indicates that the server is not ready to handle the request.");
 
         LOGGER.error(e.getMessage(), e.getCause());
 
-        return new ResponseEntity<ErrorResponce>(errorResponce, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ErrorResponce>(errorResponce, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 

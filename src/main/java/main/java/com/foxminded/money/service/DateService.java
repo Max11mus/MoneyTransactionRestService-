@@ -1,16 +1,16 @@
 package main.java.com.foxminded.money.service;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-@Component
-public class DateBean {
+@Service
+public class DateService {
     private Clock clock;
 
-    public DateBean() {
+    public DateService() {
         this.clock =  Clock.system(ZoneId.of("Etc/UTC"));;
     }
 

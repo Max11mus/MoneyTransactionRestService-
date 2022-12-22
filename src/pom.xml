@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.foxminded</groupId>
-	<artifactId>moneytransactionservice</artifactId>
+	<artifactId>money-transaction-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>moneytransactionservice</name>
+	<name>money-transaction-service</name>
 	<description>Money Transaction Service</description>
 	<properties>
 		<java.version>1.8</java.version>

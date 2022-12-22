@@ -42,20 +42,21 @@ public class MoneyTransactionRestController {
             @Content(array = @ArraySchema(schema = @Schema(implementation = MoneyTransactionDto.class)))),
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST", content =
             @Content(schema = @Schema(implementation = ErrorResponce.class))),
-            @ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content =
+            @ApiResponse(responseCode = "503", description = "SERVICE UNAVAILABLE", content =
             @Content(schema = @Schema(implementation = ErrorResponce.class)))
     })
-    @RequestMapping(value = "", method = RequestMethod.GET, params = {"id", "currency"}, produces = {"application/json"})
+    @RequestMapping(value = "", method = RequestMethod.GET, params = {"ownerId", "currency"},
+            produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<MoneyTransactionDto>> findMoneyTransactionsByOwner(
-            @Parameter(description = "Owner UUID. Cannot null or empty", required = true)
-            @RequestParam(value = "id") @UUID String id,
+            @Parameter(description = "Owner UUID. Cannot null or empty",required = true)
+            @RequestParam(value = "ownerId") @UUID String ownerId,
             @Parameter(description = "Currency Code. Cannot null or empty. See https://www.iban.com/currency-codes",
                     required = true)
             @RequestParam(value = "currency") @ValidCurrencyCode String currency) {
 
         List<MoneyTransactionDto> moneyTransactionsDtos = moneyTransactionService
-                .findMoneyTransactionsByOwnerInCurrency(java.util.UUID.fromString(id), currency);
+                .findMoneyTransactionsByOwnerInCurrency(java.util.UUID.fromString(ownerId), currency);
 
         return ResponseEntity.ok().body(moneyTransactionsDtos);
     }
