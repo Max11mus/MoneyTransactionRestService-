@@ -24,7 +24,7 @@ public class CurrencyExchangeRateService {
     Logger LOGGER = LoggerFactory.getLogger(CurrencyExchangeRateService.class);
 
     @Autowired
-    private DateService dateBean;
+    private DateService dateService;
 
     private RestTemplate restTemplate = new RestTemplate();
     private String url = "https://api.privatbank.ua/p24api/exchange_rates";
@@ -107,7 +107,7 @@ public class CurrencyExchangeRateService {
     }
 
     private void getExchangeRates() {
-        String currentDate = dateTimeFormatter.format(dateBean.getDate());
+        String currentDate = dateTimeFormatter.format(dateService.getDate());
         if (!currentDate.equals(rateDate)) {
             rateDate = currentDate;
             parseDto(getDtoFromUrl());
